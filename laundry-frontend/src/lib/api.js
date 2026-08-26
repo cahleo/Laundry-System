@@ -3,7 +3,7 @@ import { supabase } from "./supabaseClient";
 export const api = {
 
   // =========================
-  // AUTH
+  // AU TH
   // =========================
 
   login: async (email, password) => {
