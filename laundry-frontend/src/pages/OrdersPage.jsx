@@ -50,7 +50,7 @@ export default function OrdersPage() {
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 16 }}>
         <div style={{ position: "relative", flex: "1 1 240px" }}>
           <Search size={15} color={t.inkSoft} style={{ position: "absolute", left: 12, top: 11 }} />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, phone, email, or tracking id"
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or tracking id"
             style={{ ...inputStyle(t), width: "100%", paddingLeft: 34 }} />
         </div>
         <select value={status} onChange={(e) => setStatus(e.target.value)} style={inputStyle(t)}>

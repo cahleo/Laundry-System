@@ -48,20 +48,31 @@ export default function OrderDetail() {
     }
   }
 
+  async function resend() {
+  try {
+    await api.resendOrderEmail(order.id);
+    showToast("Order email resent successfully", "success");
+  } catch (e) {
+    showToast(e.message, "error");
+  }
+}
+
   async function advance() {
-    if (!isLast) await setStatus(STATUSES[idx + 1]);
+  const currentIndex = STATUSES.indexOf(order.status);
+
+  if (currentIndex === -1) {
+    showToast(`Unknown status: ${order.status}`, "error");
+    return;
   }
 
-  async function resend() {
-    const event = order.status === "picked_up" || order.status === "ready_for_pickup" ? "ready_for_pickup" : "order_created";
-    try {
-      const r = await api.resendEmail(order.id, event);
-      if (r.email?.status === "sent") showToast("Email resent");
-      else showToast(r.email?.error || "Could not send email", "error");
-    } catch (e) {
-      showToast(e.message, "error");
-    }
+  if (currentIndex >= STATUSES.length - 1) {
+    return;
   }
+
+  const nextStatus = STATUSES[currentIndex + 1];
+
+  await setStatus(nextStatus);
+}
 
   return (
     <div>

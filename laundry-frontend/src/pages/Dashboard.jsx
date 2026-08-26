@@ -65,7 +65,7 @@ export default function Dashboard() {
 
       <Clothesline label="Recent orders" />
       <Card style={{ padding: 8 }}>
-        {data.recent.map((o) => (
+        {(data.recent || []).map((o) => (
           <button key={o.id} onClick={() => navigate(`/orders/${o.id}`)} style={{
             width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
             padding: "12px 12px", background: "none", border: "none", borderBottom: `1px solid ${t.line}`,
@@ -82,7 +82,7 @@ export default function Dashboard() {
             </div>
           </button>
         ))}
-        {data.recent.length === 0 && (
+        {(data.recent || []).length === 0 &&(
           <div style={{ padding: 20, textAlign: "center", color: t.inkSoft, fontFamily: "Inter, sans-serif", fontSize: 13 }}>No orders yet.</div>
         )}
       </Card>

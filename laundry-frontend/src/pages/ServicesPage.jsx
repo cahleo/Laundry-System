@@ -35,9 +35,24 @@ export default function ServicesPage() {
   }
 
   async function toggleActive(s) {
-    await api.updateService(s.id, { active: !s.is_active });
+  try {
+    await api.updateService(s.id, {
+      name: s.name,
+      pricePerKg: s.price_per_kg,
+      isActive: !s.is_active,
+    });
+
+    showToast(
+      s.is_active
+        ? "Service deactivated"
+        : "Service activated"
+    );
+
     load();
+  } catch (e) {
+    showToast(e.message, "error");
   }
+}
 
   async function remove(id) {
     try {

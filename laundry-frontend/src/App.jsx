@@ -1,3 +1,5 @@
+import SupabaseTest from "./components/SupabaseTest";
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
@@ -22,6 +24,8 @@ export default function App() {
           <BrowserRouter>
             <Routes>
               {/* Public routes — no login required */}
+              <Route path="/supabase-test" element={<SupabaseTest />} />
+            
               <Route path="/login" element={<LoginPage />} />
               <Route path="/track" element={<TrackPage />} />
               <Route path="/track/:trackingId" element={<TrackPage />} />
@@ -37,6 +41,7 @@ export default function App() {
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />
+        
             </Routes>
           </BrowserRouter>
         </AuthProvider>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Search, Plus, Pencil, Trash2 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useToast } from "../context/ToastContext";
-import { api } from "../lib/api";
+import { supabase } from "../lib/supabaseClient";
 import { tdStyle, inputStyle } from "../lib/styles";
 import Card from "../components/Card";
 import Btn from "../components/Btn";
@@ -22,36 +22,146 @@ export default function CustomersPage() {
   const [total, setTotal] = useState(0);
   const [editing, setEditing] = useState(null); // null | {} | customer
 
-  async function load() {
-    const r = await api.listCustomers({ q, page, pageSize: PAGE_SIZE });
-    setCustomers(r.customers);
-    setTotal(r.total);
+async function load() {
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  // Get customers
+  let query = supabase
+    .from("customers")
+    .select(
+      "id, full_name, phone, email, created_at, updated_at, created_by",
+      { count: "exact" }
+    )
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (q.trim() !== "") {
+    query = query.or(
+      `full_name.ilike.%${q}%,phone.ilike.%${q}%,email.ilike.%${q}%`
+    );
   }
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [q, page]);
-  useEffect(() => { setPage(0); }, [q]);
+  const { data: customerData, count, error } = await query;
 
-  async function save(data) {
+  if (error) {
+    console.error("Failed to load customers:", error);
+    showToast(error.message, "error");
+    return;
+  }
+
+  // Get order counts for these customers
+  const customerIds = (customerData || []).map((customer) => customer.id);
+
+  let orderCounts = {};
+
+  if (customerIds.length > 0) {
+    const { data: orderData, error: orderError } = await supabase
+      .from("orders")
+      .select("customer_id")
+      .in("customer_id", customerIds);
+
+    if (orderError) {
+      console.error("Failed to load order counts:", orderError);
+    } else {
+      (orderData || []).forEach((order) => {
+        orderCounts[order.customer_id] =
+          (orderCounts[order.customer_id] || 0) + 1;
+      });
+    }
+  }
+
+  // Add order_count to each customer
+  const customersWithOrders = (customerData || []).map((customer) => ({
+    ...customer,
+    order_count: orderCounts[customer.id] || 0,
+  }));
+
+  console.log("Customers loaded:", customersWithOrders);
+
+  setCustomers(customersWithOrders);
+  setTotal(count || 0);
+}
+
+useEffect(() => {
+  load();
+}, [q, page]);
+
+useEffect(() => {
+  setPage(0);
+}, [q]);
+
+ async function save(data) {
+  try {
     if (editing?.id) {
-      await api.updateCustomer(editing.id, data);
+      const { error } = await supabase
+        .from("customers")
+        .update({
+          full_name: data.fullName,
+          phone: data.phone || null,
+          email: data.email || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editing.id);
+
+      if (error) throw error;
+
       showToast("Customer updated");
     } else {
-      await api.createCustomer(data);
+      const { data: authData, error: authError } =
+  await supabase.auth.getUser();
+
+if (authError) throw authError;
+
+const user = authData.user;
+
+const { data: admin, error: adminError } = await supabase
+  .from("admins")
+  .select("id")
+  .eq("email", user.email)
+  //.single();//
+
+if (adminError) throw adminError;
+
+const { error } = await supabase
+  .from("customers")
+  .insert({
+    full_name: data.fullName,
+    phone: data.phone || null,
+    email: data.email || null,
+    created_by: admin.id,
+  });
+
+if (error) throw error;
+      if (error) throw error;
+
       showToast("Customer added");
     }
+
     setEditing(null);
     load();
+  } catch (e) {
+    console.error("Customer save error:", e);
+    showToast(e.message, "error");
   }
+}
 
   async function remove(id) {
-    try {
-      await api.deleteCustomer(id);
-      showToast("Customer deleted");
-      load();
-    } catch (e) {
-      showToast(e.message, "error");
-    }
+  try {
+    const { error } = await supabase
+      .from("customers")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    showToast("Customer deleted");
+    load();
+  } catch (e) {
+    console.error("Customer delete error:", e);
+    showToast(e.message, "error");
   }
+}
 
   return (
     <div>
@@ -79,6 +189,8 @@ export default function CustomersPage() {
                 <td style={tdStyle(t)}>{c.phone}</td>
                 <td style={tdStyle(t)}>{c.email}</td>
                 <td style={tdStyle(t)}>{c.order_count}</td>
+
+
                 <td style={{ ...tdStyle(t), textAlign: "right" }}>
                   <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
                     <IconBtn onClick={() => setEditing(c)}><Pencil size={13} /></IconBtn>

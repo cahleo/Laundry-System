@@ -34,7 +34,17 @@ export default function ReportsPage() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 14, marginBottom: 6 }}>
-        <StatCard label="Completed orders" value={totalOrders} sub={`Last ${data.length} ${range} periods`} />
+        <StatCard
+          label="Completed orders"
+          value={totalOrders}
+          sub={
+            range === "daily"
+              ? "Last 7 days"
+              : range === "weekly"
+              ? "Last 8 weeks"
+              : "Last 12 months"
+          }
+        />
         <StatCard label="Income" value={peso(totalIncome)} />
       </div>
 

@@ -17,9 +17,32 @@ export function peso(n) {
 }
 
 export function fmtDate(d) {
-  return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-PH", {
+    timeZone: "Asia/Manila",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function fmtDateTime(d) {
-  return new Date(d).toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  if (!d) return "—";
+
+  const value = String(d);
+
+  // Supabase timestamp without time zone is being stored as UTC.
+  // Explicitly treat it as UTC before converting to Philippine time.
+  const utcValue =
+    value.endsWith("Z") || value.includes("+")
+      ? value
+      : `${value}Z`;
+
+  return new Date(utcValue).toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
