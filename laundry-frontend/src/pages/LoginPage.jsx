@@ -318,49 +318,51 @@ export default function LoginPage() {
           </Field>
 
           <Field label="Password">
-            <div style={{ position: "relative" }}>
-              <input
+              <div
                 style={{
-                  ...inputStyle(t),
-                  paddingRight: 42,
+                  position: "relative",
+                  width: "100%",
                 }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                autoComplete={
-                  mode === "login" ? "current-password" : "new-password"
-                }
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                  color: t.inkSoft,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-                aria-label={
-                  showPassword ? "Hide password" : "Show password"
-                }
               >
-                {showPassword ? (
-                  <EyeOff size={16} />
-                ) : (
-                  <Eye size={16} />
-                )}
-              </button>
-            </div>
-          </Field>
+                <input
+                  style={{
+                    ...inputStyle(t),
+                    paddingRight: 42,
+                  }}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  autoComplete={
+                    mode === "login" ? "current-password" : "new-password"
+                  }
+                />
 
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 24,
+                    height: 24,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    color: t.inkSoft,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </Field>
             {mode === "login" && loginError && (
               <div
                 style={{
@@ -377,51 +379,60 @@ export default function LoginPage() {
 
           {mode === "signup" && (
             <>
-              <Field label="Confirm password">
-                <div style={{ position: "relative" }}>
-                  <input
+               <Field label="Confirm password">
+                  <div
                     style={{
-                      ...inputStyle(t),
-                      paddingRight: 42,
+                      position: "relative",
+                      width: "100%",
                     }}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    style={{
-                      position: "absolute",
-                      right: 10,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      border: "none",
-                      background: "transparent",
-                      cursor: "pointer",
-                      color: t.inkSoft,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                    aria-label={
-                      showConfirmPassword
-                        ? "Hide confirm password"
-                        : "Show confirm password"
-                    }
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff size={16} />
-                    ) : (
-                      <Eye size={16} />
-                    )}
-                  </button>
-                </div>
-              </Field>
+                    <input
+                      style={{
+                        ...inputStyle(t),
+                        paddingRight: 42,
+                      }}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      style={{
+                        position: "absolute",
+                        right: 10,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        width: 24,
+                        height: 24,
+                        padding: 0,
+                        border: "none",
+                        background: "transparent",
+                        cursor: "pointer",
+                        color: t.inkSoft,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
+                </Field>
 
               <div
                 style={{
